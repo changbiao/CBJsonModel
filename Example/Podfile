@@ -1,0 +1,6 @@
+use_frameworks!
+target 'CBJsonModel_Tests' do
+  pod 'CBJsonModel', :path => '../'
+  
+  
+end
