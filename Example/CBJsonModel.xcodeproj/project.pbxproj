@@ -17,7 +17,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		03FDFC88B435A91A7E48D2DA /* CBJsonModel.podspec */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = CBJsonModel.podspec; path = ../CBJsonModel.podspec; sourceTree = "<group>"; };
+		03FDFC88B435A91A7E48D2DA /* CBJsonModel.podspec */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = CBJsonModel.podspec; path = ../CBJsonModel.podspec; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 		0A4DA9C91EC06FDE007CE6A8 /* CBJsonModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CBJsonModel.h; path = ../CBJsonModel/Classes/CBJsonModel.h; sourceTree = "<group>"; };
 		0A4DA9CA1EC06FDE007CE6A8 /* CBJsonModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CBJsonModel.m; path = ../CBJsonModel/Classes/CBJsonModel.m; sourceTree = "<group>"; };
 		30CED2B46BAFA078EA84ED43 /* Pods-CBJsonModel_Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CBJsonModel_Tests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-CBJsonModel_Tests/Pods-CBJsonModel_Tests.debug.xcconfig"; sourceTree = "<group>"; };
