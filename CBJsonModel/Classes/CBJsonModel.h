@@ -11,11 +11,13 @@
 
 
 #if DEBUG
-#define AFLog NSLog
+#define CBLog NSLog
 #else
-#define AFLog
+#define CBLog
 #endif
-#define AFCBImageCDN @"https://img.cdn.0xcb.com/"
+
+//设置图片 cdn 地址,如果后台返回图片 url 是相对地址
+extern NSString *CBImageCDNURL;
 
 #define CBJsonProtocol(__N__) @protocol __N__ <NSObject> @end
 #define CBEnsureClassPtr(_OBJ_, _CLS_) ((_CLS_ *)((_OBJ_ && [_OBJ_ isKindOfClass:[_CLS_ class]]) ? _OBJ_ : nil))
@@ -76,6 +78,9 @@ CBJsonProtocol(NSMutableString);
 @property (nonatomic, copy, readonly) NSDate *cbDate;
 @property (nonatomic, copy, readonly) NSString *cbTimestamp;
 - (NSString *)cbDateStringWithFmt:(NSString *)fmtStr;
+//yyyy.MM.dd
+- (NSString *)cbDateYYYYMMDD_DOT;
+//yyyy-MM-dd
 - (NSString *)cbDateYYYY_MM_DD;
 - (NSString *)cbDateYYYY_MM_DD_HH_mm;
 - (NSString *)cbDateMM_DD_HH_mm;

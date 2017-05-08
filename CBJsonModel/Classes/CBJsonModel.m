@@ -9,6 +9,8 @@
 #import "CBJsonModel.h"
 
 
+NSString *CBImageCDNURL = @"0xcb";
+
 
 @implementation CBJsonModel
 + (instancetype)modelFromJson:(NSString *)jsonString
@@ -16,7 +18,7 @@
     NSError *error = nil;
     CBJsonModel *mod = [[[self class] alloc] initWithString:jsonString usingEncoding:NSUTF8StringEncoding error:&error];
     if (error) {
-        AFLog(@"#注意! json对象转换错误 %@", error);
+        CBLog(@"#注意! json对象转换错误 %@", error);
     }
     return mod;
 }
@@ -26,14 +28,14 @@
     NSError *error = nil;
     CBJsonModel *mod = [[[self class] alloc] initWithDictionary:jsonDict error:&error];
     if (error) {
-        AFLog(@"#注意! json对象转换错误 %@", error);
+        CBLog(@"#注意! json对象转换错误 %@", error);
     }
     return mod;
 }
 
 - (void)setValue:(id)value forUndefinedKey:(NSString *)key
 {
-    AFLog(@"注意设置未定义的kv =====  {%@:%@}", key, value);
+    CBLog(@"注意设置未定义的kv =====  {%@:%@}", key, value);
 }
 
 @end
@@ -47,9 +49,15 @@
     if ([trimStr hasPrefix:@"http"]) {
         return [NSURL URLWithString:trimStr];
     }else if ([trimStr hasPrefix:@"/"] && trimStr.length){
-        return [NSURL URLWithString:[NSString stringWithFormat:@"%@%@", AFCBImageCDN, trimStr]];
+        if ([CBImageCDNURL isEqualToString:@"0xcb"]) {
+            CBLog(@"图片地址需要先指定CDN拼接地址");
+        }
+        return [NSURL URLWithString:[NSString stringWithFormat:@"%@%@", CBImageCDNURL, trimStr]];
     }else {
-        return [NSURL URLWithString:[NSString stringWithFormat:@"%@/%@", AFCBImageCDN, trimStr]];
+        if ([CBImageCDNURL isEqualToString:@"0xcb"]) {
+            CBLog(@"图片地址需要先指定CDN拼接地址");
+        }
+        return [NSURL URLWithString:[NSString stringWithFormat:@"%@/%@", CBImageCDNURL, trimStr]];
     }
 }
 
@@ -228,6 +236,11 @@
     fmt.dateFormat = fmtStr;
     NSString* dateString = [fmt stringFromDate:self.cbDate];
     return dateString;
+}
+
+- (NSString *)cbDateYYYYMMDD_DOT
+{
+    return [self cbDateStringWithFmt:@"yyyy.MM.dd"];
 }
 
 - (NSString *)cbDateYYYY_MM_DD
