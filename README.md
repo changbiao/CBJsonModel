@@ -17,12 +17,13 @@ CBJsonModel is available through [CocoaPods](http://cocoapods.org). To install
 it, simply add the following line to your Podfile:
 
 ```ruby
-pod "CBJsonModel"
+  pod 'JSONModel'
+  pod 'CBJsonModel'
 ```
 
 ## Author
 
-changbiao, 5.5.5.b.i.a.o@163.com
+changbiao
 
 ## License
 

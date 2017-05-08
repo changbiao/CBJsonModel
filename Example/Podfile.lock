@@ -1,0 +1,19 @@
+PODS:
+  - CBJsonModel (0.1.0)
+  - JSONModel (1.7.0)
+
+DEPENDENCIES:
+  - CBJsonModel (from `../`)
+  - JSONModel
+
+EXTERNAL SOURCES:
+  CBJsonModel:
+    :path: "../"
+
+SPEC CHECKSUMS:
+  CBJsonModel: d4d49edc0c1cdce08d58916e047fd5a1644bda35
+  JSONModel: 840bc0fcffb24b8454d2c026bf26fea454b8e98d
+
+PODFILE CHECKSUM: 18c4051ce8056148f52c2c02d725e2ac668cacb7
+
+COCOAPODS: 1.2.0
