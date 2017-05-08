@@ -16,8 +16,10 @@ To run the example project, clone the repo, and run `pod install` from the Examp
 CBJsonModel is available through [CocoaPods](http://cocoapods.org). To install
 it, simply add the following line to your Podfile:
 
+已经设置好依赖,简单的☝️一个引入库即可自动引入JSONModel
+
 ```ruby
-  pod 'JSONModel'
+  #pod 'JSONModel'
   pod 'CBJsonModel'
 ```
 

@@ -18,7 +18,9 @@ Pod::Spec.new do |s|
 #   * Finally, don't worry about the indent, CocoaPods strips it!
 
   s.description      = <<-DESC
-TODO: Add long description of the pod here.
+  对 JSONModel 的对象进行类别扩展, 方便'语法糖'式的调用 :)
+  已经添加 JSONModel 的依赖,不需要再用 pod 导入JSONModel 库
+
                        DESC
 
   s.homepage         = 'https://github.com/changbiao/CBJsonModel'
