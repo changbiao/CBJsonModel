@@ -7,12 +7,23 @@
 //
 
 #import "CBJsonModel.h"
+#import <objc/runtime.h>
 
-
+const static void *CBJsonModelCellClassKey = &CBJsonModelCellClassKey;
 NSString *CBImageCDNURL = @"0xcb";
+UIColor *CBTableViewBgColor = nil;
 
 
 @implementation CBJsonModel
+
+- (instancetype)init
+{
+    if (self = [super init]) {
+        self.cb_cellClass([UITableViewCell class]);
+    }
+    return self;
+}
+
 + (instancetype)modelFromJson:(NSString *)jsonString
 {
     NSError *error = nil;
@@ -38,8 +49,61 @@ NSString *CBImageCDNURL = @"0xcb";
     CBLog(@"注意设置未定义的kv =====  {%@:%@}", key, value);
 }
 
++ (BOOL)propertyIsIgnored:(NSString *)propertyName
+{
+    if ([@[@"cb_cellClass", @"cb_onUpdate", @"cb_onSelected", @"cb_updateListener", @"cb_eventListener"]
+         containsObject:propertyName]) {
+        return YES;
+    }
+    return [super propertyIsIgnored:propertyName];
+}
+
 @end
 
+
+
+@implementation CBJsonModel (__0xcb_wrapper__)
+
+- (AFCBClassProperty)cb_cellClass
+{
+    __weak typeof(self) weakSelf = self;
+    return ^Class(Class cls) {
+        if (cls != nil) {
+            objc_setAssociatedObject(weakSelf, CBJsonModelCellClassKey, cls, OBJC_ASSOCIATION_ASSIGN);
+        }
+        return objc_getAssociatedObject(weakSelf, CBJsonModelCellClassKey);
+    };
+}
+
+- (AFCBItemListener)cb_updateListener
+{
+    __weak typeof(self) ws = self;
+    return ^(UITableViewCell *cell) {
+        if ([cell isKindOfClass:[UITableViewCell class]] && [cell conformsToProtocol:@protocol(CBCellProtocol)]) {
+            if ([cell isKindOfClass:ws.cb_cellClass(nil)]) {
+                if (ws.cb_onUpdate) {
+                    ws.cb_onUpdate((id <CBCellProtocol>)cell, (id <CBJsonModel>)ws);
+                }
+            }
+        }
+    };
+}
+
+- (AFCBItemListener)cb_eventListener
+{
+    __weak typeof(self) ws = self;
+    return ^(UITableViewCell *cell) {
+        if ([cell isKindOfClass:[UITableViewCell class]] && [cell conformsToProtocol:@protocol(CBCellProtocol)]) {
+            if ([cell isKindOfClass:ws.cb_cellClass(nil)]) {
+                if (ws.cb_onSelected) {
+                    ws.cb_onSelected((id <CBCellProtocol>)cell, (id <CBJsonModel>)ws);
+                }
+            }
+        }
+    };
+}
+
+@end
 
 
 @implementation NSString (__0xcb__)
@@ -247,13 +311,121 @@ NSString *CBImageCDNURL = @"0xcb";
 {
     return [self cbDateStringWithFmt:@"yyyy-MM-dd"];
 }
+
 - (NSString *)cbDateYYYY_MM_DD_HH_mm
 {
     return [self cbDateStringWithFmt:@"yyyy-MM-dd HH:mm"];
 }
+
 - (NSString *)cbDateMM_DD_HH_mm
 {
     return [self cbDateStringWithFmt:@"MM-dd HH:mm"];
 }
 
 @end
+
+
+@implementation UITableView (__0xcb__)
+
+- (void)cb_registerNibClass:(Class)nibClass
+{
+    NSString *nibName = NSStringFromClass(nibClass);
+    [self registerNib:[UINib nibWithNibName:nibName bundle:[NSBundle mainBundle]] forCellReuseIdentifier:nibName];
+}
+
+@end
+
+
+@implementation NSMutableArray (__0xcb__)
+
+- (AFCBAddItemBlock)cb_addModel
+{
+    return ^NSMutableArray *(AFCBAddItemWrapper wrapper) {
+        id model = [CBJsonModel new];
+        id wModel = model;
+        if (wrapper) {
+           wModel = wrapper(model);
+        }
+        if (wModel) {
+            [self addObject:wModel];
+        }
+        return self;
+    };
+}
+
+@end
+
+
+
+@interface CBDelegateDataSource ()
+@property (nonatomic, retain) NSMutableArray *cb_dataArray;
+@end
+
+@implementation CBDelegateDataSource
+
+- (instancetype)init
+{
+    if (self = [super init]) {
+        self.cb_dataArray = [NSMutableArray arrayWithCapacity:10];
+    }
+    return self;
+}
+
+- (void)cb_removeAll
+{
+    [self.cb_dataArray removeAllObjects];
+}
+
+- (AFCBAddItemBlock)cb_addModel
+{
+    return self.cb_dataArray.cb_addModel;
+}
+
+- (void)cb_registerCellNibWithClasses{}
+
+- (void)cb_setupWithTable:(UITableView *)tableView
+{
+    self.cb_tableView = tableView;
+    //simple style
+    tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
+    if (CBTableViewBgColor) {
+        tableView.backgroundColor = CBTableViewBgColor;
+    }
+    tableView.tableFooterView = [UIView new];
+    tableView.tableHeaderView = [UIView new];
+    //register cells
+    [self cb_registerCellNibWithClasses];
+    //then set delegate, datasource
+    tableView.delegate = self;
+    tableView.dataSource = self;
+}
+
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
+{
+    return self.cb_dataArray.count;
+}
+
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    CBJsonModel *model = self.cb_dataArray[indexPath.row];
+    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:NSStringFromClass(model.cb_cellClass(nil)) forIndexPath:indexPath];
+    model.cb_updateListener(cell);
+    return cell;
+}
+
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    CBJsonModel *model = self.cb_dataArray[indexPath.row];
+    return [model.cb_cellClass(nil) cb_Height];
+}
+
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    CBJsonModel *model = self.cb_dataArray[indexPath.row];
+    UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
+    model.cb_eventListener(cell);
+}
+
+@end
+
+

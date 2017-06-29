@@ -18,18 +18,24 @@
 
 //设置图片 cdn 地址,如果后台返回图片 url 是相对地址
 extern NSString *CBImageCDNURL;
+extern UIColor *CBTableViewBgColor;
 
 #define CBJsonProtocol(__N__) @protocol __N__ <NSObject> @end
 #define CBEnsureClassPtr(_OBJ_, _CLS_) ((_CLS_ *)((_OBJ_ && [_OBJ_ isKindOfClass:[_CLS_ class]]) ? _OBJ_ : nil))
 #define CBEnsureNotNull(_STR_) (((_STR_)==nil || [_STR_ isEqual:[NSNull null]] || ![_STR_ isKindOfClass:[NSString class]]) ? @"" : _STR_)
 #define CBEnsureNotNullNum(_STR_) (((_STR_)==nil || [_STR_ isEqual:[NSNull null]] || ![_STR_ isKindOfClass:[NSNumber class]]) ? @(0) : _STR_)
 
-
+@class CBJsonModel;
+@protocol CBCellProtocol;
 CBJsonProtocol(CBJsonModel);
 CBJsonProtocol(NSMutableArray);
 CBJsonProtocol(NSMutableDictionary);
 CBJsonProtocol(NSMutableString);
-
+typedef Class (^AFCBClassProperty)(Class cls);
+typedef void (^AFCBItemListener)(UITableViewCell *cell);
+typedef void (^AFCBItemAdapter)(id /*<CBCellProtocol>*/ cell, id <CBJsonModel>model);
+typedef id <CBJsonModel> (^AFCBAddItemWrapper) (id <CBJsonModel>model);
+typedef NSMutableArray *(^AFCBAddItemBlock) (AFCBAddItemWrapper wrapper);
 
 @protocol CBJsonModelListProtocol <CBJsonModel>
 @property (nonatomic, copy) NSNumber <Optional>*total;
@@ -37,13 +43,26 @@ CBJsonProtocol(NSMutableString);
 @property (nonatomic, retain) NSMutableArray <CBJsonModel, Optional>*list;
 @end
 
+@protocol CBCellProtocol <NSObject>
+@property (class, nonatomic, assign, readonly) CGFloat cb_Height;
+@end
 
 @interface CBJsonModel : JSONModel
 @property (nonatomic, copy) NSNumber <Optional>*ret;
 @property (nonatomic, copy) NSString <Optional>*msg;
 @property (nonatomic, retain) NSObject <CBJsonModelListProtocol, NSMutableArray, CBJsonModel, NSMutableDictionary, NSMutableString, Optional>*data;
+@property (nonatomic, copy) AFCBItemAdapter cb_onUpdate;
+@property (nonatomic, copy) AFCBItemAdapter cb_onSelected;
+
 + (instancetype)modelFromJson:(NSString *)jsonString;
 + (instancetype)modelFromDict:(NSDictionary *)jsonDict;
+@end
+
+
+@interface CBJsonModel (__0xcb_wrapper__)
+@property (nonatomic, copy, readonly) AFCBClassProperty cb_cellClass;
+@property (nonatomic, copy, readonly) AFCBItemListener cb_updateListener;
+@property (nonatomic, copy, readonly) AFCBItemListener cb_eventListener;
 @end
 
 
@@ -85,3 +104,24 @@ CBJsonProtocol(NSMutableString);
 - (NSString *)cbDateYYYY_MM_DD_HH_mm;
 - (NSString *)cbDateMM_DD_HH_mm;
 @end
+
+
+@interface UITableView (__0xcb__)
+- (void)cb_registerNibClass:(Class)nibClass;
+@end
+
+
+@interface NSMutableArray (__0xcb__)
+@property (nonatomic, copy, readonly) AFCBAddItemBlock cb_addModel;
+@end
+
+
+
+@interface CBDelegateDataSource : NSObject <UITableViewDelegate, UITableViewDataSource>
+@property (nonatomic, copy, readonly) AFCBAddItemBlock cb_addModel;
+@property (nonatomic, weak) UITableView *cb_tableView;
+- (void)cb_removeAll;
+- (void)cb_setupWithTable:(UITableView *)tableView;
+@end
+
+
