@@ -64,7 +64,7 @@ UIColor *CBTableViewBgColor = nil;
 
 @implementation CBJsonModel (__0xcb_wrapper__)
 
-- (AFCBClassProperty)cb_cellClass
+- (CBClassProperty)cb_cellClass
 {
     __weak typeof(self) weakSelf = self;
     return ^Class(Class cls) {
@@ -75,7 +75,7 @@ UIColor *CBTableViewBgColor = nil;
     };
 }
 
-- (AFCBItemListener)cb_updateListener
+- (CBItemListener)cb_updateListener
 {
     __weak typeof(self) ws = self;
     return ^(UITableViewCell *cell) {
@@ -89,7 +89,7 @@ UIColor *CBTableViewBgColor = nil;
     };
 }
 
-- (AFCBItemListener)cb_eventListener
+- (CBItemListener)cb_eventListener
 {
     __weak typeof(self) ws = self;
     return ^(UITableViewCell *cell) {
@@ -338,9 +338,9 @@ UIColor *CBTableViewBgColor = nil;
 
 @implementation NSMutableArray (__0xcb__)
 
-- (AFCBAddItemBlock)cb_addModel
+- (CBAddItemBlock)cb_addModel
 {
-    return ^NSMutableArray *(AFCBAddItemWrapper wrapper) {
+    return ^NSMutableArray *(CBAddItemWrapper wrapper) {
         id model = [CBJsonModel new];
         id wModel = model;
         if (wrapper) {
@@ -376,7 +376,7 @@ UIColor *CBTableViewBgColor = nil;
     [self.cb_dataArray removeAllObjects];
 }
 
-- (AFCBAddItemBlock)cb_addModel
+- (CBAddItemBlock)cb_addModel
 {
     return self.cb_dataArray.cb_addModel;
 }

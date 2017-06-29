@@ -31,11 +31,11 @@ CBJsonProtocol(CBJsonModel);
 CBJsonProtocol(NSMutableArray);
 CBJsonProtocol(NSMutableDictionary);
 CBJsonProtocol(NSMutableString);
-typedef Class (^AFCBClassProperty)(Class cls);
-typedef void (^AFCBItemListener)(UITableViewCell *cell);
-typedef void (^AFCBItemAdapter)(id /*<CBCellProtocol>*/ cell, id <CBJsonModel>model);
-typedef id <CBJsonModel> (^AFCBAddItemWrapper) (id <CBJsonModel>model);
-typedef NSMutableArray *(^AFCBAddItemBlock) (AFCBAddItemWrapper wrapper);
+typedef Class (^CBClassProperty)(Class cls);
+typedef void (^CBItemListener)(UITableViewCell *cell);
+typedef void (^CBItemAdapter)(id /*<CBCellProtocol>*/ cell, id <CBJsonModel>model);
+typedef id <CBJsonModel> (^CBAddItemWrapper) (id <CBJsonModel>model);
+typedef NSMutableArray *(^CBAddItemBlock) (CBAddItemWrapper wrapper);
 
 @protocol CBJsonModelListProtocol <CBJsonModel>
 @property (nonatomic, copy) NSNumber <Optional>*total;
@@ -51,8 +51,8 @@ typedef NSMutableArray *(^AFCBAddItemBlock) (AFCBAddItemWrapper wrapper);
 @property (nonatomic, copy) NSNumber <Optional>*ret;
 @property (nonatomic, copy) NSString <Optional>*msg;
 @property (nonatomic, retain) NSObject <CBJsonModelListProtocol, NSMutableArray, CBJsonModel, NSMutableDictionary, NSMutableString, Optional>*data;
-@property (nonatomic, copy) AFCBItemAdapter cb_onUpdate;
-@property (nonatomic, copy) AFCBItemAdapter cb_onSelected;
+@property (nonatomic, copy) CBItemAdapter cb_onUpdate;
+@property (nonatomic, copy) CBItemAdapter cb_onSelected;
 
 + (instancetype)modelFromJson:(NSString *)jsonString;
 + (instancetype)modelFromDict:(NSDictionary *)jsonDict;
@@ -60,9 +60,9 @@ typedef NSMutableArray *(^AFCBAddItemBlock) (AFCBAddItemWrapper wrapper);
 
 
 @interface CBJsonModel (__0xcb_wrapper__)
-@property (nonatomic, copy, readonly) AFCBClassProperty cb_cellClass;
-@property (nonatomic, copy, readonly) AFCBItemListener cb_updateListener;
-@property (nonatomic, copy, readonly) AFCBItemListener cb_eventListener;
+@property (nonatomic, copy, readonly) CBClassProperty cb_cellClass;
+@property (nonatomic, copy, readonly) CBItemListener cb_updateListener;
+@property (nonatomic, copy, readonly) CBItemListener cb_eventListener;
 @end
 
 
@@ -112,13 +112,13 @@ typedef NSMutableArray *(^AFCBAddItemBlock) (AFCBAddItemWrapper wrapper);
 
 
 @interface NSMutableArray (__0xcb__)
-@property (nonatomic, copy, readonly) AFCBAddItemBlock cb_addModel;
+@property (nonatomic, copy, readonly) CBAddItemBlock cb_addModel;
 @end
 
 
 
 @interface CBDelegateDataSource : NSObject <UITableViewDelegate, UITableViewDataSource>
-@property (nonatomic, copy, readonly) AFCBAddItemBlock cb_addModel;
+@property (nonatomic, copy, readonly) CBAddItemBlock cb_addModel;
 @property (nonatomic, weak) UITableView *cb_tableView;
 - (void)cb_removeAll;
 - (void)cb_setupWithTable:(UITableView *)tableView;
