@@ -8,8 +8,8 @@
 
 Pod::Spec.new do |s|
   s.name             = 'CBJsonModel'
-  s.version          = '0.1.0'
-  s.summary          = 'A short description of CBJsonModel.'
+  s.version          = '1.0.0'
+  s.summary          = 'Simple, Faster build some form submit App with catgory, Wrapper UITableView delegate and dataSource with block.'
 
 # This description is used to generate tags and improve search results.
 #   * Think: What does it do? Why did you write it? What is the focus?
@@ -19,6 +19,7 @@ Pod::Spec.new do |s|
 
   s.description      = <<-DESC
   对 JSONModel 的对象进行类别扩展, 方便'语法糖'式的调用 :)
+  添加UITableView的相关刷新及事件在Model的配置回调
   已经添加 JSONModel 的依赖,不需要再用 pod 导入JSONModel 库
 
                        DESC
