@@ -45,7 +45,7 @@ typedef NSMutableArray *(^CBAddItemBlock) (CBAddItemWrapper wrapper);
 @end
 
 @protocol CBCellProtocol <NSObject>
-@property (class, nonatomic, assign, readonly) CGFloat cb_Height;
+@property (class, nonatomic, assign, readonly) CGFloat cbHeight;
 @end
 
 @interface CBJsonModel : JSONModel
