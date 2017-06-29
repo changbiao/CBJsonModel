@@ -33,8 +33,9 @@ CBJsonProtocol(NSMutableDictionary);
 CBJsonProtocol(NSMutableString);
 typedef Class (^CBClassProperty)(Class cls);
 typedef void (^CBItemListener)(UITableViewCell *cell);
+//严格模式有时间再改
 typedef void (^CBItemAdapter)(id /*<CBCellProtocol>*/ cell, id /*<CBJsonModel>*/ model);
-typedef id <CBJsonModel> (^CBAddItemWrapper) (id <CBJsonModel>model);
+typedef id /*<CBJsonModel>*/ (^CBAddItemWrapper) (id /*<CBJsonModel>*/ model);
 typedef NSMutableArray *(^CBAddItemBlock) (CBAddItemWrapper wrapper);
 
 @protocol CBJsonModelListProtocol <CBJsonModel>
