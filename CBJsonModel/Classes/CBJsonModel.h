@@ -118,10 +118,13 @@ typedef NSMutableArray *(^CBAddItemBlock) (CBAddItemWrapper wrapper);
 
 
 @interface CBDelegateDataSource : NSObject <UITableViewDelegate, UITableViewDataSource>
-@property (nonatomic, copy, readonly) CBAddItemBlock cb_addModel;
 @property (nonatomic, weak) UITableView *cb_tableView;
+@property (nonatomic, copy, readonly) CBAddItemBlock cb_addModel;
 - (void)cb_removeAll;
+//call this setup tableView's style and delegate dataSource.
 - (void)cb_setupWithTable:(UITableView *)tableView;
+//for subclass override.
+- (void)cb_registerCellNibWithClasses;
 @end
 
 
