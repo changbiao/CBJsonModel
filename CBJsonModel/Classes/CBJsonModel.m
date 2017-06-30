@@ -394,13 +394,7 @@ UIColor *CBTableViewBgColor = nil;
 
 - (CBGetItemWrapper)cb_atIndex
 {
-    __weak __typeof(self) weakSelf = self;
-    return ^CBJsonModel *(NSUInteger idx) {
-        if (idx >= weakSelf.cb_dataArray.count) {
-            return nil;
-        }
-        return [weakSelf.cb_dataArray objectAtIndex:idx];
-    };
+    return self.cb_dataArray.cb_atIndex;
 }
 
 - (void)cb_registerCellNibWithClasses{}
