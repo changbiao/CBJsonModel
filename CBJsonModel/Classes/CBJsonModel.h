@@ -116,6 +116,7 @@ typedef NSMutableArray *(^CBAddItemBlock) (CBAddItemWrapper wrapper);
 
 @interface NSMutableArray (__0xcb__)
 @property (nonatomic, copy, readonly) CBAddItemBlock cb_addModel;
+@property (nonatomic, copy, readonly) CBGetItemWrapper cb_atIndex;
 @end
 
 
@@ -124,6 +125,7 @@ typedef NSMutableArray *(^CBAddItemBlock) (CBAddItemWrapper wrapper);
 @property (nonatomic, weak) UITableView *cb_tableView;
 @property (nonatomic, copy, readonly) CBGetItemWrapper cb_atIndex;
 @property (nonatomic, copy, readonly) CBAddItemBlock cb_addModel;
+@property (nonatomic, copy, readonly) CBGetItemWrapper cb_atIndex;
 - (void)cb_removeAll;
 //call this setup tableView's style and delegate dataSource.
 - (void)cb_setupWithTable:(UITableView *)tableView;
@@ -132,3 +134,6 @@ typedef NSMutableArray *(^CBAddItemBlock) (CBAddItemWrapper wrapper);
 @end
 
 
+@interface CBDelegateDataSource (__0xcb__)
+@property (nonatomic, retain, readonly) NSMutableArray *cb_dataArray;
+@end

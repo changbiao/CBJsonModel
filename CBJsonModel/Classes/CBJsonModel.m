@@ -353,6 +353,17 @@ UIColor *CBTableViewBgColor = nil;
     };
 }
 
+- (CBGetItemWrapper)cb_atIndex
+{
+    __weak __typeof(self) weakSelf = self;
+    return ^CBJsonModel *(NSUInteger idx) {
+        if (idx >= weakSelf.count) {
+            return nil;
+        }
+        return [weakSelf objectAtIndex:idx];
+    };
+}
+
 @end
 
 
