@@ -35,8 +35,11 @@ typedef Class (^CBClassProperty)(Class cls);
 typedef void (^CBItemListener)(UITableViewCell *cell);
 //严格模式有时间再改
 typedef void (^CBItemAdapter)(id /*<CBCellProtocol>*/ cell, id /*<CBJsonModel>*/ model);
-typedef id /*<CBJsonModel>*/ (^CBAddItemWrapper) (id /*<CBJsonModel>*/ model);
+typedef id /*<CBJsonModel>*/ (^CBAddItemWrapper)(id /*<CBJsonModel>*/ model);
+typedef id /*<CBJsonModel>*/ (^CBGetItemWrapper)(NSUInteger index);
 typedef NSMutableArray *(^CBAddItemBlock) (CBAddItemWrapper wrapper);
+
+
 
 @protocol CBJsonModelListProtocol <CBJsonModel>
 @property (nonatomic, copy) NSNumber <Optional>*total;
@@ -114,6 +117,7 @@ typedef NSMutableArray *(^CBAddItemBlock) (CBAddItemWrapper wrapper);
 
 @interface NSMutableArray (__0xcb__)
 @property (nonatomic, copy, readonly) CBAddItemBlock cb_addModel;
+@property (nonatomic, copy, readonly) CBGetItemWrapper cb_atIndex;
 @end
 
 
@@ -121,6 +125,7 @@ typedef NSMutableArray *(^CBAddItemBlock) (CBAddItemWrapper wrapper);
 @interface CBDelegateDataSource : NSObject <UITableViewDelegate, UITableViewDataSource>
 @property (nonatomic, weak) UITableView *cb_tableView;
 @property (nonatomic, copy, readonly) CBAddItemBlock cb_addModel;
+@property (nonatomic, copy, readonly) CBGetItemWrapper cb_atIndex;
 - (void)cb_removeAll;
 //call this setup tableView's style and delegate dataSource.
 - (void)cb_setupWithTable:(UITableView *)tableView;
@@ -129,3 +134,6 @@ typedef NSMutableArray *(^CBAddItemBlock) (CBAddItemWrapper wrapper);
 @end
 
 
+@interface CBDelegateDataSource (__0xcb__)
+@property (nonatomic, retain, readonly) NSMutableArray *cb_dataArray;
+@end

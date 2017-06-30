@@ -353,6 +353,17 @@ UIColor *CBTableViewBgColor = nil;
     };
 }
 
+- (CBGetItemWrapper)cb_atIndex
+{
+    __weak __typeof(self) weakSelf = self;
+    return ^CBJsonModel *(NSUInteger idx) {
+        if (idx >= weakSelf.count) {
+            return nil;
+        }
+        return [weakSelf objectAtIndex:idx];
+    };
+}
+
 @end
 
 
@@ -379,6 +390,11 @@ UIColor *CBTableViewBgColor = nil;
 - (CBAddItemBlock)cb_addModel
 {
     return self.cb_dataArray.cb_addModel;
+}
+
+- (CBGetItemWrapper)cb_atIndex
+{
+    return self.cb_dataArray.cb_atIndex;
 }
 
 - (void)cb_registerCellNibWithClasses{}
