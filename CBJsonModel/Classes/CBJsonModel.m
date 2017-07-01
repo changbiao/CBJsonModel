@@ -469,7 +469,10 @@ UIColor *CBTableViewBgColor = nil;
 
 - (CBGetItemWrapper)cb_atIndex
 {
-    return self.cb_dataArray.cb_atIndex;
+    CBJsomModelWeakSelf;
+    return ^CBJsonModel *(NSUInteger idx) {
+        return ws.cb_dataArray.count>idx ? ws.cb_dataArray[idx] : nil;
+    };
 }
 
 - (void)cb_registerCellNibWithClasses{}
