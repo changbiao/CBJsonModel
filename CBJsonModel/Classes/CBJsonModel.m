@@ -54,7 +54,10 @@ UIColor *CBTableViewBgColor = nil;
 
 + (BOOL)propertyIsIgnored:(NSString *)propertyName
 {
-    if ([@[@"cb_cellClass", @"cb_onUpdate", @"cb_onSelected", @"cb_updateListener", @"cb_eventListener"]
+    if ([@[@"cb_cellClass",
+           @"cb_onUpdate", @"cb_onSelected", @"cb_canEdit", @"cb_editStyle", @"cb_onEditor", @"cb_onDelConfirm",
+           @"cb_updateListener", @"cb_eventListener", @"cb_canEditListener", @"cb_editStyleListener", @"cb_editorListener", @"cb_delConfirmListener"
+           ]
          containsObject:propertyName]) {
         return YES;
     }
