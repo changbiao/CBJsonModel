@@ -31,7 +31,18 @@ CBJsonProtocol(CBJsonModel);
 CBJsonProtocol(NSMutableArray);
 CBJsonProtocol(NSMutableDictionary);
 CBJsonProtocol(NSMutableString);
+
+//type 
 typedef Class (^CBClassProperty)(Class cls);
+typedef id /*<CBCellProtocol>*/ CBDrivableCell;
+typedef id /*<CBJsonModel>*/ CBDriverModel;
+//model drive cell, TODO: strict mode for compiler
+typedef void (^CBItemAdapter)(CBDrivableCell cell, CBDriverModel model);
+typedef BOOL (^CBItemCanEdit)(CBDrivableCell cell, CBDriverModel model);
+typedef UITableViewCellEditingStyle (^CBItemEditStyle)(CBDrivableCell cell, CBDriverModel model);
+typedef void (^CBItemEditor)(CBDrivableCell cell, CBDriverModel model, UITableViewCellEditingStyle editStyle);
+typedef NSString *(^CBItemDelComfirm)(CBDrivableCell cell, CBDriverModel model);
+//model ability, Just for impl
 typedef void (^CBItemListener)(UITableViewCell *cell);
 //严格模式有时间再改
 typedef void (^CBItemAdapter)(id /*<CBCellProtocol>*/ cell, id /*<CBJsonModel>*/ model);
@@ -55,8 +66,16 @@ typedef NSMutableArray *(^CBAddItemBlock) (CBAddItemWrapper wrapper);
 @property (nonatomic, copy) NSNumber <Optional>*ret;
 @property (nonatomic, copy) NSString <Optional>*msg;
 @property (nonatomic, retain) NSObject <CBJsonModelListProtocol, NSMutableArray, CBJsonModel, NSMutableDictionary, NSMutableString, Optional>*data;
+
+//additions
+//Call property CBClassProperty cb_cellClass to set cell class, because JSONModel can't define a `Class` type property.
+//@property (nonatomic, assign) Class cb_cellClass;
 @property (nonatomic, copy) CBItemAdapter cb_onUpdate;
 @property (nonatomic, copy) CBItemAdapter cb_onSelected;
+@property (nonatomic, copy) CBItemCanEdit cb_canEdit;
+@property (nonatomic, copy) CBItemEditStyle cb_editStyle;
+@property (nonatomic, copy) CBItemEditor cb_onEditor;
+@property (nonatomic, copy) CBItemDelComfirm cb_onDelConfirm;
 
 + (instancetype)modelFromJson:(NSString *)jsonString;
 + (instancetype)modelFromDict:(NSDictionary *)jsonDict;
@@ -67,6 +86,12 @@ typedef NSMutableArray *(^CBAddItemBlock) (CBAddItemWrapper wrapper);
 @property (nonatomic, copy, readonly) CBClassProperty cb_cellClass;
 @property (nonatomic, copy, readonly) CBItemListener cb_updateListener;
 @property (nonatomic, copy, readonly) CBItemListener cb_eventListener;
+@property (nonatomic, copy, readonly) CBItemCanEditListener cb_canEditListener;
+@property (nonatomic, copy, readonly) CBItemEditStyleListener cb_editStyleListener;
+@property (nonatomic, copy, readonly) CBItemEditorListener cb_editorListener;
+@property (nonatomic, copy, readonly) CBItemDelComfirmListener cb_delConfirmListener;
++ (BOOL)cb_isDrivableCell:(UITableViewCell *)cell;
+- (BOOL)cb_isSelfDriveCell:(UITableViewCell *)cell;
 @end
 
 
@@ -125,7 +150,6 @@ typedef NSMutableArray *(^CBAddItemBlock) (CBAddItemWrapper wrapper);
 @interface CBDelegateDataSource : NSObject <UITableViewDelegate, UITableViewDataSource>
 @property (nonatomic, weak) UITableView *cb_tableView;
 @property (nonatomic, copy, readonly) CBAddItemBlock cb_addModel;
-@property (nonatomic, copy, readonly) CBGetItemWrapper cb_atIndex;
 - (void)cb_removeAll;
 //call this setup tableView's style and delegate dataSource.
 - (void)cb_setupWithTable:(UITableView *)tableView;
