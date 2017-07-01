@@ -69,12 +69,15 @@ UIColor *CBTableViewBgColor = nil;
 
 + (BOOL)cb_isDrivableCell:(UITableViewCell *)cell
 {
+    if (cell == nil) {
+        return NO;
+    }
     if (![cell isKindOfClass:[UITableViewCell class]]) {
-        JMLog(@"CBJsonModel: %@ is not a UITableViewCell type!", cell);
+        JMLog(@" %@ is not a UITableViewCell type !", cell);
         return NO;
     }
     if (![cell conformsToProtocol:@protocol(CBCellProtocol)]) {
-        JMLog(@"CBJsonModel: %@ is not conforms to CBCellProtocol!", cell);
+        JMLog(@" %@ is not conforms to CBCellProtocol !", cell);
         return NO;
     }
     return YES;
@@ -86,7 +89,7 @@ UIColor *CBTableViewBgColor = nil;
         return NO;
     }
     if (![cell isKindOfClass:self.cb_cellClass(nil)]) {
-        JMLog(@"CBJsonModel: %@ can't drive by model whitch can drive %@!", cell, NSStringFromClass(self.cb_cellClass(nil)));
+        JMLog(@" %@ can't drive by model whitch can drive %@ !", cell, NSStringFromClass(self.cb_cellClass(nil)));
         return NO;
     }
     return YES;
