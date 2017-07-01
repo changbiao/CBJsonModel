@@ -9,6 +9,9 @@
 #import "CBJsonModel.h"
 #import <objc/runtime.h>
 
+
+#define CBJsomModelWeakSelf __weak typeof(self) ws = self;
+
 const static void *CBJsonModelCellClassKey = &CBJsonModelCellClassKey;
 NSString *CBImageCDNURL = @"0xcb";
 UIColor *CBTableViewBgColor = nil;
@@ -64,26 +67,49 @@ UIColor *CBTableViewBgColor = nil;
 
 @implementation CBJsonModel (__0xcb_wrapper__)
 
++ (BOOL)cb_isDrivableCell:(UITableViewCell *)cell
+{
+    if (![cell isKindOfClass:[UITableViewCell class]]) {
+        JMLog(@"CBJsonModel: %@ is not a UITableViewCell type!", cell);
+        return NO;
+    }
+    if (![cell conformsToProtocol:@protocol(CBCellProtocol)]) {
+        JMLog(@"CBJsonModel: %@ is not conforms to CBCellProtocol!", cell);
+        return NO;
+    }
+    return YES;
+}
+
+- (BOOL)cb_isSelfDriveCell:(UITableViewCell *)cell
+{
+    if (![CBJsonModel cb_isDrivableCell:cell]) {
+        return NO;
+    }
+    if (![cell isKindOfClass:self.cb_cellClass(nil)]) {
+        JMLog(@"CBJsonModel: %@ can't drive by model whitch can drive %@!", cell, NSStringFromClass(self.cb_cellClass(nil)));
+        return NO;
+    }
+    return YES;
+}
+
 - (CBClassProperty)cb_cellClass
 {
-    __weak typeof(self) weakSelf = self;
+    CBJsomModelWeakSelf;
     return ^Class(Class cls) {
         if (cls != nil) {
-            objc_setAssociatedObject(weakSelf, CBJsonModelCellClassKey, cls, OBJC_ASSOCIATION_ASSIGN);
+            objc_setAssociatedObject(ws, CBJsonModelCellClassKey, cls, OBJC_ASSOCIATION_ASSIGN);
         }
-        return objc_getAssociatedObject(weakSelf, CBJsonModelCellClassKey);
+        return objc_getAssociatedObject(ws, CBJsonModelCellClassKey);
     };
 }
 
 - (CBItemListener)cb_updateListener
 {
-    __weak typeof(self) ws = self;
+    CBJsomModelWeakSelf;
     return ^(UITableViewCell *cell) {
-        if ([cell isKindOfClass:[UITableViewCell class]] && [cell conformsToProtocol:@protocol(CBCellProtocol)]) {
-            if ([cell isKindOfClass:ws.cb_cellClass(nil)]) {
-                if (ws.cb_onUpdate) {
-                    ws.cb_onUpdate((id <CBCellProtocol>)cell, (id <CBJsonModel>)ws);
-                }
+        if ([ws cb_isSelfDriveCell:cell]) {
+            if (ws.cb_onUpdate) {
+                ws.cb_onUpdate((CBDrivableCell)cell, (CBDriverModel)ws);
             }
         }
     };
@@ -91,15 +117,64 @@ UIColor *CBTableViewBgColor = nil;
 
 - (CBItemListener)cb_eventListener
 {
-    __weak typeof(self) ws = self;
+    CBJsomModelWeakSelf;
     return ^(UITableViewCell *cell) {
-        if ([cell isKindOfClass:[UITableViewCell class]] && [cell conformsToProtocol:@protocol(CBCellProtocol)]) {
-            if ([cell isKindOfClass:ws.cb_cellClass(nil)]) {
-                if (ws.cb_onSelected) {
-                    ws.cb_onSelected((id <CBCellProtocol>)cell, (id <CBJsonModel>)ws);
-                }
+        if ([ws cb_isSelfDriveCell:cell]) {
+            if (ws.cb_onSelected) {
+                ws.cb_onSelected((CBDrivableCell)cell, (CBDriverModel)ws);
             }
         }
+    };
+}
+
+- (CBItemCanEditListener)cb_canEditListener
+{
+    CBJsomModelWeakSelf;
+    return ^(UITableViewCell *cell) {
+        if ([ws cb_isSelfDriveCell:cell]) {
+            if (ws.cb_canEdit) {
+                return ws.cb_canEdit((CBDrivableCell)cell, (CBDriverModel)ws);
+            }
+        }
+        return cell.isEditing;
+    };
+}
+
+- (CBItemEditStyleListener)cb_editStyleListener
+{
+    CBJsomModelWeakSelf;
+    return ^(UITableViewCell *cell) {
+        if ([ws cb_isSelfDriveCell:cell]) {
+            if (ws.cb_editStyle) {
+                return ws.cb_editStyle((CBDrivableCell)cell, (CBDriverModel)ws);
+            }
+        }
+        return cell.editingStyle;
+    };
+}
+
+- (CBItemEditorListener)cb_editorListener
+{
+    CBJsomModelWeakSelf;
+    return ^(UITableViewCell *cell, UITableViewCellEditingStyle editStyle) {
+        if ([ws cb_isSelfDriveCell:cell]) {
+            if (ws.cb_onEditor) {
+                ws.cb_onEditor((CBDrivableCell)cell, (CBDriverModel)ws, editStyle);
+            }
+        }
+    };
+}
+
+- (CBItemDelComfirmListener)cb_delConfirmListener
+{
+    CBJsomModelWeakSelf;
+    return ^(UITableViewCell *cell) {
+        if ([ws cb_isSelfDriveCell:cell]) {
+            if (ws.cb_onDelConfirm) {
+                return ws.cb_onDelConfirm((CBDrivableCell)cell, (CBDriverModel)ws);
+            }
+        }
+        return @"Delete";
     };
 }
 
@@ -355,12 +430,12 @@ UIColor *CBTableViewBgColor = nil;
 
 - (CBGetItemWrapper)cb_atIndex
 {
-    __weak __typeof(self) weakSelf = self;
+    CBJsomModelWeakSelf;
     return ^CBJsonModel *(NSUInteger idx) {
-        if (idx >= weakSelf.count) {
+        if (idx >= ws.count) {
             return nil;
         }
-        return [weakSelf objectAtIndex:idx];
+        return [ws objectAtIndex:idx];
     };
 }
 
@@ -394,12 +469,9 @@ UIColor *CBTableViewBgColor = nil;
 
 - (CBGetItemWrapper)cb_atIndex
 {
-    __weak __typeof(self) weakSelf = self;
+    CBJsomModelWeakSelf;
     return ^CBJsonModel *(NSUInteger idx) {
-        if (idx >= weakSelf.cb_dataArray.count) {
-            return nil;
-        }
-        return [weakSelf.cb_dataArray objectAtIndex:idx];
+        return ws.cb_dataArray.count>idx ? ws.cb_dataArray[idx] : nil;
     };
 }
 
@@ -446,6 +518,34 @@ UIColor *CBTableViewBgColor = nil;
     CBJsonModel *model = self.cb_dataArray[indexPath.row];
     UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
     model.cb_eventListener(cell);
+}
+
+- (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    CBJsonModel *model = self.cb_dataArray[indexPath.row];
+    UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
+    return model.cb_canEditListener(cell);
+}
+
+- (UITableViewCellEditingStyle)tableView:(UITableView *)tableView editingStyleForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    CBJsonModel *model = self.cb_dataArray[indexPath.row];
+    UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
+    return model.cb_editStyleListener(cell);
+}
+
+- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    CBJsonModel *model = self.cb_dataArray[indexPath.row];
+    UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
+    model.cb_editorListener(cell, editingStyle);
+}
+
+- (NSString *)tableView:(UITableView *)tableView titleForDeleteConfirmationButtonForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    CBJsonModel *model = self.cb_dataArray[indexPath.row];
+    UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
+    return model.cb_delConfirmListener(cell);
 }
 
 @end
