@@ -503,6 +503,18 @@ UIColor *CBTableViewBgColor = nil;
 
 - (void)cb_registerCellNibWithClasses{}
 
+- (NSMutableDictionary *)cb_getFormParams
+{
+    NSMutableDictionary *params = [NSMutableDictionary dictionaryWithCapacity:10];
+    for (id jm in self.cb_dataArray) {
+        CBJsonModel *cbjm = jm;
+        if ([cbjm isKindOfClass:[CBJsonModel class]]) {
+            [params addEntriesFromDictionary:cbjm.cb_params];
+        }
+    }
+    return params;
+}
+
 - (void)cb_setupWithTable:(UITableView *)tableView
 {
     self.cb_tableView = tableView;

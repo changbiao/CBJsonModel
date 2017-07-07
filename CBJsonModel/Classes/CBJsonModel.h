@@ -163,4 +163,5 @@ typedef NSMutableArray *(^CBAddItemBlock) (CBAddItemWrapper wrapper);
 
 @interface CBDelegateDataSource (__0xcb__)
 @property (nonatomic, retain, readonly) NSMutableArray *cb_dataArray;
+- (NSMutableDictionary *)cb_getFormParams;
 @end
