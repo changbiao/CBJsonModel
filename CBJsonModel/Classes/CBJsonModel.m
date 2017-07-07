@@ -548,7 +548,11 @@ UIColor *CBTableViewBgColor = nil;
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     CBJsonModel *model = self.cb_dataArray[indexPath.row];
-    return [model.cb_cellClass(nil) cbHeight];
+    Class clz = model.cb_cellClass(nil);
+    if (clz !=nil && class_respondsToSelector(clz, @selector(cbHeight))) {
+        return [model.cb_cellClass(nil) cbHeight];
+    }
+    return 0;
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
