@@ -17,6 +17,12 @@ NSString *CBImageCDNURL = @"0xcb";
 UIColor *CBTableViewBgColor = nil;
 
 
+@interface CBJsonModel ()
+{
+    NSMutableDictionary *_cb_params;
+}
+@end
+
 @implementation CBJsonModel
 
 - (instancetype)init
@@ -64,6 +70,14 @@ UIColor *CBTableViewBgColor = nil;
     return [super propertyIsIgnored:propertyName];
 }
 
+- (NSMutableDictionary *)cb_params
+{
+    if (!_cb_params) {
+        _cb_params = [NSMutableDictionary dictionaryWithCapacity:10];
+    }
+    return _cb_params;
+}
+
 @end
 
 
@@ -103,6 +117,12 @@ UIColor *CBTableViewBgColor = nil;
     CBJsomModelWeakSelf;
     return ^Class(Class cls) {
         if (cls != nil) {
+            ws.cb_onUpdate = nil;
+            ws.cb_onSelected = nil;
+            ws.cb_canEdit = nil;
+            ws.cb_editStyle = nil;
+            ws.cb_onEditor = nil;
+            ws.cb_onDelConfirm = nil;
             objc_setAssociatedObject(ws, CBJsonModelCellClassKey, cls, OBJC_ASSOCIATION_ASSIGN);
         }
         return objc_getAssociatedObject(ws, CBJsonModelCellClassKey);

@@ -71,6 +71,7 @@ typedef NSMutableArray *(^CBAddItemBlock) (CBAddItemWrapper wrapper);
 //additions
 //Call property CBClassProperty cb_cellClass to set cell class, because JSONModel can't define a `Class` type property.
 //@property (nonatomic, assign) Class cb_cellClass;
+@property (nonatomic, retain, readonly) NSMutableDictionary *cb_params;
 @property (nonatomic, copy) CBItemAdapter cb_onUpdate;
 @property (nonatomic, copy) CBItemAdapter cb_onSelected;
 @property (nonatomic, copy) CBItemCanEdit cb_canEdit;
