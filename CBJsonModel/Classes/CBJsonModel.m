@@ -551,7 +551,7 @@ UIColor *CBTableViewBgColor = nil;
 {
     CBJsonModel *model = self.cb_dataArray[indexPath.row];
     Class clz = model.cb_cellClass(nil);
-    if (clz!=nil && class_respondsToSelector(clz, @selector(cbHeight))) {
+    if (object_isClass(clz) && class_getClassMethod(clz, @selector(cbHeight))) {
         return [model.cb_cellClass(nil) cbHeight];
     }
     return 0;
