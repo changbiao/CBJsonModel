@@ -501,7 +501,9 @@ UIColor *CBTableViewBgColor = nil;
     };
 }
 
-- (void)cb_registerCellNibWithClasses{}
+- (void)cb_registerCellNibWithClasses{
+    [self.cb_tableView registerClass:[UITableViewCell class] forCellReuseIdentifier:NSStringFromClass([UITableViewCell class])];
+}
 
 - (NSMutableDictionary *)cb_getFormParams
 {
@@ -549,7 +551,7 @@ UIColor *CBTableViewBgColor = nil;
 {
     CBJsonModel *model = self.cb_dataArray[indexPath.row];
     Class clz = model.cb_cellClass(nil);
-    if (clz !=nil && class_respondsToSelector(clz, @selector(cbHeight))) {
+    if (clz!=nil && class_respondsToSelector(clz, @selector(cbHeight))) {
         return [model.cb_cellClass(nil) cbHeight];
     }
     return 0;
