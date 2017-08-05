@@ -101,7 +101,7 @@ UIColor *CBTableViewBgColor = nil;
         }
          */
         //just send notice log to console
-        JMLog(@" %@ is not conforms to CBCellProtocol !", cell);
+        //JMLog(@" %@ is not conforms to CBCellProtocol !", cell);
         //return NO;
     }
     return YES;
