@@ -10,6 +10,7 @@
 #import <objc/runtime.h>
 
 
+
 #define CBJsomModelWeakSelf __weak typeof(self) ws = self;
 
 const static void *CBJsonModelCellClassKey = &CBJsonModelCellClassKey;
@@ -442,8 +443,13 @@ UIColor *CBTableViewBgColor = nil;
 
 @end
 
+@interface CBMutableArray : NSObject
+@property (nonatomic, retain) NSMutableArray *cb_mutableArray;
+@property (nonatomic, retain) NSMutableSet *cb_cellClassSet;
+@property (nonatomic, copy) void (^cb_onMemberChanged)(CBMutableArray *cbMutArray);
+@end
 
-@implementation NSMutableArray (__0xcb__)
+@implementation CBMutableArray (__0xcb__)
 
 - (CBAddItemBlock)cb_addModel
 {
@@ -454,9 +460,9 @@ UIColor *CBTableViewBgColor = nil;
            wModel = wrapper(model);
         }
         if (wModel) {
-            [self addObject:wModel];
+            [(NSMutableArray *)self addObject:wModel];
         }
-        return self;
+        return (NSMutableArray *)self;
     };
 }
 
@@ -464,23 +470,58 @@ UIColor *CBTableViewBgColor = nil;
 {
     CBJsomModelWeakSelf;
     return ^CBJsonModel *(NSUInteger idx) {
-        if (idx >= ws.count) {
+        if (idx >= ((NSMutableArray *)ws).count) {
             return nil;
         }
-        return [ws objectAtIndex:idx];
+        return [(NSMutableArray *)ws objectAtIndex:idx];
     };
 }
 
 @end
 
 
-@interface CBMutableArray : NSMutableArray
-@property (nonatomic, retain) NSMutableSet *cb_cellClassSet;
-@property (nonatomic, copy) void (^cb_onMemberChanged)(CBMutableArray *cbMutArray);
-@end
+
 
 @implementation CBMutableArray
+@synthesize cb_mutableArray = _cb_mutableArray;
 @synthesize cb_cellClassSet = _cb_cellClassSet;
+
+- (NSMethodSignature *)methodSignatureForSelector:(SEL)aSelector{
+    NSMethodSignature *signature = [super methodSignatureForSelector:aSelector];
+    if (!signature) {
+        (signature = [self.cb_mutableArray methodSignatureForSelector:aSelector]);
+    }
+    return signature;
+}
+
+- (void)forwardInvocation:(NSInvocation *)anInvocation{
+    if ([super respondsToSelector:anInvocation.selector]) {
+        [anInvocation invokeWithTarget:self];
+    }
+    if ([self.cb_mutableArray respondsToSelector:anInvocation.selector]) {
+        [anInvocation invokeWithTarget:self.cb_mutableArray];
+    }
+}
+
+- (BOOL)respondsToSelector:(SEL)aSelector{
+    if ([super respondsToSelector:aSelector]) {
+        return YES;
+    }
+    if ([self.cb_mutableArray respondsToSelector:aSelector]) {
+        return YES;
+    }
+    return NO;
+}
+
+- (NSMutableArray *)cb_mutableArray
+{
+    @synchronized (self) {
+        if (!_cb_mutableArray) {
+            _cb_mutableArray = [NSMutableArray arrayWithCapacity:10];
+        }
+        return _cb_mutableArray;
+    }
+}
 
 - (NSMutableSet *)cb_cellClassSet
 {
@@ -524,49 +565,49 @@ UIColor *CBTableViewBgColor = nil;
 
 - (void)addObject:(id)anObject
 {
-    [super addObject:anObject];
+    [self.cb_mutableArray addObject:anObject];
     [self cb_tryToFindCellClassWithObject:anObject];
 }
 
 - (void)addObjectsFromArray:(NSArray *)otherArray
 {
-    [super addObjectsFromArray:otherArray];
+    [self.cb_mutableArray addObjectsFromArray:otherArray];
     [self cb_tryToFindCellClassWithObjects:otherArray];
 }
 
 - (void)insertObject:(id)anObject atIndex:(NSUInteger)index
 {
-    [super insertObject:anObject atIndex:index];
+    [self.cb_mutableArray insertObject:anObject atIndex:index];
     [self cb_tryToFindCellClassWithObject:anObject];
 }
 
 - (void)insertObjects:(NSArray *)objects atIndexes:(NSIndexSet *)indexes
 {
-    [super insertObjects:objects atIndexes:indexes];
+    [self.cb_mutableArray insertObjects:objects atIndexes:indexes];
     [self cb_tryToFindCellClassWithObjects:objects];
 }
 
 - (void)replaceObjectAtIndex:(NSUInteger)index withObject:(id)anObject
 {
-    [super replaceObjectAtIndex:index withObject:anObject];
+    [self.cb_mutableArray replaceObjectAtIndex:index withObject:anObject];
     [self cb_tryToFindCellClassWithObject:anObject];
 }
 
 - (void)replaceObjectsAtIndexes:(NSIndexSet *)indexes withObjects:(NSArray *)objects
 {
-    [super replaceObjectsAtIndexes:indexes withObjects:objects];
+    [self.cb_mutableArray replaceObjectsAtIndexes:indexes withObjects:objects];
     [self cb_tryToFindCellClassWithObjects:objects];
 }
 
 - (void)replaceObjectsInRange:(NSRange)range withObjectsFromArray:(NSArray *)otherArray
 {
-    [super replaceObjectsInRange:range withObjectsFromArray:otherArray];
+    [self.cb_mutableArray replaceObjectsInRange:range withObjectsFromArray:otherArray];
     [self cb_tryToFindCellClassWithObjects:otherArray];
 }
 
 - (void)replaceObjectsInRange:(NSRange)range withObjectsFromArray:(NSArray *)otherArray range:(NSRange)otherRange
 {
-    [super replaceObjectsInRange:range withObjectsFromArray:otherArray range:otherRange];
+    [self.cb_mutableArray replaceObjectsInRange:range withObjectsFromArray:otherArray range:otherRange];
     [self cb_tryToFindCellClassWithObjects:[otherArray subarrayWithRange:otherRange]];
 }
 
@@ -574,7 +615,7 @@ UIColor *CBTableViewBgColor = nil;
 
 
 @interface CBDelegateDataSource ()
-@property (nonatomic, retain) CBMutableArray *cb_dataArray;
+@property (nonatomic, retain) NSMutableArray *cb_dataArray;
 @end
 
 @implementation CBDelegateDataSource
@@ -582,9 +623,11 @@ UIColor *CBTableViewBgColor = nil;
 - (instancetype)init
 {
     if (self = [super init]) {
-        self.cb_dataArray = [CBMutableArray arrayWithCapacity:10];
-        __weak typeof(self) ws = self;
-        self.cb_dataArray.cb_onMemberChanged = ^(CBMutableArray *cbMutArray) {
+        //self.cb_dataArray = [CBMutableArray arrayWithCapacity:10];
+        CBMutableArray *cbMutArr = [CBMutableArray new];
+        self.cb_dataArray = (id)cbMutArr;
+        CBJsomModelWeakSelf;
+        cbMutArr.cb_onMemberChanged = ^(CBMutableArray *cbMutArray) {
             for (NSString *clsName in cbMutArray.cb_cellClassSet) {
                 [ws.cb_tableView cb_registerNibClass:NSClassFromString(clsName)];
             }
@@ -596,8 +639,9 @@ UIColor *CBTableViewBgColor = nil;
 - (void)setCb_tableView:(UITableView *)cb_tableView
 {
     _cb_tableView = cb_tableView;
-    __weak typeof(self) ws = self;
-    for (NSString *clsName in self.cb_dataArray.cb_cellClassSet) {
+    CBJsomModelWeakSelf;
+    CBMutableArray *cbMutArr = (id)(self.cb_dataArray);
+    for (NSString *clsName in cbMutArr.cb_cellClassSet) {
         [ws.cb_tableView cb_registerNibClass:NSClassFromString(clsName)];
     }
 }

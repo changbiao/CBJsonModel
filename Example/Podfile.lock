@@ -1,5 +1,6 @@
 PODS:
-  - CBJsonModel (0.1.0)
+  - CBJsonModel (1.0.4):
+    - JSONModel
   - JSONModel (1.7.0)
 
 DEPENDENCIES:
@@ -8,12 +9,12 @@ DEPENDENCIES:
 
 EXTERNAL SOURCES:
   CBJsonModel:
-    :path: "../"
+    :path: ../
 
 SPEC CHECKSUMS:
-  CBJsonModel: d4d49edc0c1cdce08d58916e047fd5a1644bda35
+  CBJsonModel: 6cf42d2d81f3bb9d3167d4a8548c9f26307f7041
   JSONModel: 840bc0fcffb24b8454d2c026bf26fea454b8e98d
 
-PODFILE CHECKSUM: 18c4051ce8056148f52c2c02d725e2ac668cacb7
+PODFILE CHECKSUM: c5d08865eae1bdffdcb37e71ebd0bdf94543626d
 
-COCOAPODS: 1.2.0
+COCOAPODS: 1.2.1

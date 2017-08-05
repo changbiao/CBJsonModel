@@ -1,7 +1,12 @@
 use_frameworks!
+
+target 'SampleApp' do
+    pod 'JSONModel'
+    pod 'CBJsonModel', :path => '../'
+    
+end
+
 target 'CBJsonModel_Tests' do
     pod 'JSONModel'
     pod 'CBJsonModel', :path => '../'
-  
-  
 end

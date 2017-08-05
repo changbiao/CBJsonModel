@@ -89,12 +89,12 @@ strip_invalid_archs() {
 
 
 if [[ "$CONFIGURATION" == "Debug" ]]; then
-  install_framework "$BUILT_PRODUCTS_DIR/CBJsonModel-iOS8.3/CBJsonModel.framework"
-  install_framework "$BUILT_PRODUCTS_DIR/JSONModel-iOS8.3/JSONModel.framework"
+  install_framework "$BUILT_PRODUCTS_DIR/CBJsonModel-iOS10.3/CBJsonModel.framework"
+  install_framework "$BUILT_PRODUCTS_DIR/JSONModel-iOS10.3/JSONModel.framework"
 fi
 if [[ "$CONFIGURATION" == "Release" ]]; then
-  install_framework "$BUILT_PRODUCTS_DIR/CBJsonModel-iOS8.3/CBJsonModel.framework"
-  install_framework "$BUILT_PRODUCTS_DIR/JSONModel-iOS8.3/JSONModel.framework"
+  install_framework "$BUILT_PRODUCTS_DIR/CBJsonModel-iOS10.3/CBJsonModel.framework"
+  install_framework "$BUILT_PRODUCTS_DIR/JSONModel-iOS10.3/JSONModel.framework"
 fi
 if [ "${COCOAPODS_PARALLEL_CODE_SIGN}" == "true" ]; then
   wait
