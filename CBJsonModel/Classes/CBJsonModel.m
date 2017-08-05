@@ -474,9 +474,107 @@ UIColor *CBTableViewBgColor = nil;
 @end
 
 
+@interface CBMutableArray : NSMutableArray
+@property (nonatomic, retain) NSMutableSet *cb_cellClassSet;
+@property (nonatomic, copy) void (^cb_onMemberChanged)(CBMutableArray *cbMutArray);
+@end
+
+@implementation CBMutableArray
+@synthesize cb_cellClassSet = _cb_cellClassSet;
+
+- (NSMutableSet *)cb_cellClassSet
+{
+    @synchronized (self) {
+        if (!_cb_cellClassSet) {
+            _cb_cellClassSet = [NSMutableSet setWithCapacity:10];
+        }
+        return _cb_cellClassSet;
+    }
+}
+
+- (void)cb_tryToFindCellClassWithObject:(id)obj
+{
+    if (obj && [obj isKindOfClass:[CBJsonModel class]]) {
+        [self.cb_cellClassSet addObject:NSStringFromClass(((CBJsonModel *)obj).cb_cellClass(nil))];
+        if (self.cb_onMemberChanged) {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                self.cb_onMemberChanged(self);
+            });
+        }
+    }else {
+        CBLog(@"[+]: 0xcb Error: %s object:%@", __func__, obj);
+    }
+}
+
+- (void)cb_tryToFindCellClassWithObjects:(NSArray *)objects
+{
+    [objects enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+        if (obj && [obj isKindOfClass:[CBJsonModel class]]) {
+            [self.cb_cellClassSet addObject:NSStringFromClass(((CBJsonModel *)obj).cb_cellClass(nil))];
+        }else {
+            CBLog(@"[+]: 0xcb Error: %s object:%@", __func__, obj);
+        }
+    }];
+    if (self.cb_onMemberChanged) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            self.cb_onMemberChanged(self);
+        });
+    }
+}
+
+- (void)addObject:(id)anObject
+{
+    [super addObject:anObject];
+    [self cb_tryToFindCellClassWithObject:anObject];
+}
+
+- (void)addObjectsFromArray:(NSArray *)otherArray
+{
+    [super addObjectsFromArray:otherArray];
+    [self cb_tryToFindCellClassWithObjects:otherArray];
+}
+
+- (void)insertObject:(id)anObject atIndex:(NSUInteger)index
+{
+    [super insertObject:anObject atIndex:index];
+    [self cb_tryToFindCellClassWithObject:anObject];
+}
+
+- (void)insertObjects:(NSArray *)objects atIndexes:(NSIndexSet *)indexes
+{
+    [super insertObjects:objects atIndexes:indexes];
+    [self cb_tryToFindCellClassWithObjects:objects];
+}
+
+- (void)replaceObjectAtIndex:(NSUInteger)index withObject:(id)anObject
+{
+    [super replaceObjectAtIndex:index withObject:anObject];
+    [self cb_tryToFindCellClassWithObject:anObject];
+}
+
+- (void)replaceObjectsAtIndexes:(NSIndexSet *)indexes withObjects:(NSArray *)objects
+{
+    [super replaceObjectsAtIndexes:indexes withObjects:objects];
+    [self cb_tryToFindCellClassWithObjects:objects];
+}
+
+- (void)replaceObjectsInRange:(NSRange)range withObjectsFromArray:(NSArray *)otherArray
+{
+    [super replaceObjectsInRange:range withObjectsFromArray:otherArray];
+    [self cb_tryToFindCellClassWithObjects:otherArray];
+}
+
+- (void)replaceObjectsInRange:(NSRange)range withObjectsFromArray:(NSArray *)otherArray range:(NSRange)otherRange
+{
+    [super replaceObjectsInRange:range withObjectsFromArray:otherArray range:otherRange];
+    [self cb_tryToFindCellClassWithObjects:[otherArray subarrayWithRange:otherRange]];
+}
+
+@end
+
 
 @interface CBDelegateDataSource ()
-@property (nonatomic, retain) NSMutableArray *cb_dataArray;
+@property (nonatomic, retain) CBMutableArray *cb_dataArray;
 @end
 
 @implementation CBDelegateDataSource
@@ -484,9 +582,24 @@ UIColor *CBTableViewBgColor = nil;
 - (instancetype)init
 {
     if (self = [super init]) {
-        self.cb_dataArray = [NSMutableArray arrayWithCapacity:10];
+        self.cb_dataArray = [CBMutableArray arrayWithCapacity:10];
+        __weak typeof(self) ws = self;
+        self.cb_dataArray.cb_onMemberChanged = ^(CBMutableArray *cbMutArray) {
+            for (NSString *clsName in cbMutArray.cb_cellClassSet) {
+                [ws.cb_tableView cb_registerNibClass:NSClassFromString(clsName)];
+            }
+        };
     }
     return self;
+}
+
+- (void)setCb_tableView:(UITableView *)cb_tableView
+{
+    _cb_tableView = cb_tableView;
+    __weak typeof(self) ws = self;
+    for (NSString *clsName in self.cb_dataArray.cb_cellClassSet) {
+        [ws.cb_tableView cb_registerNibClass:NSClassFromString(clsName)];
+    }
 }
 
 - (void)cb_removeAll
@@ -527,10 +640,12 @@ UIColor *CBTableViewBgColor = nil;
 {
     self.cb_tableView = tableView;
     //simple style
-    tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
     if (CBTableViewBgColor) {
         tableView.backgroundColor = CBTableViewBgColor;
     }
+    tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
+    tableView.rowHeight = UITableViewAutomaticDimension;
+    tableView.estimatedRowHeight = 215;
     tableView.tableFooterView = [UIView new];
     tableView.tableHeaderView = [UIView new];
     //register cells
