@@ -562,8 +562,10 @@ UIColor *CBTableViewBgColor = nil;
             return [model.cb_cellClass(nil) cbHeight];
         }else if (class_getInstanceMethod(clz, @selector(intrinsicContentSize))){
             CGFloat sw = [UIScreen mainScreen].bounds.size.width;
-            CGSize icSize = [[tableView cellForRowAtIndexPath:indexPath] intrinsicContentSize];
-            return icSize.width>0 ? (sw * icSize.height / icSize.width) : 0;
+            UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
+            [cell invalidateIntrinsicContentSize];
+            CGSize icSize = [cell intrinsicContentSize];
+            return icSize.width>0 ? (sw * icSize.height / icSize.width) : UITableViewAutomaticDimension;
         }
     }
     return 0;
