@@ -94,8 +94,14 @@ UIColor *CBTableViewBgColor = nil;
         return NO;
     }
     if (![cell conformsToProtocol:@protocol(CBCellProtocol)]) {
+        /*
+        if ([cell respondsToSelector:@selector(intrinsicContentSize)] || [cell respondsToSelector:@selector(cbHeight)]) {
+            return YES;
+        }
+         */
+        //just send notice log to console
         JMLog(@" %@ is not conforms to CBCellProtocol !", cell);
-        return NO;
+        //return NO;
     }
     return YES;
 }
@@ -551,8 +557,14 @@ UIColor *CBTableViewBgColor = nil;
 {
     CBJsonModel *model = self.cb_dataArray[indexPath.row];
     Class clz = model.cb_cellClass(nil);
-    if (object_isClass(clz) && class_getClassMethod(clz, @selector(cbHeight))) {
-        return [model.cb_cellClass(nil) cbHeight];
+    if (object_isClass(clz)) {
+        if (class_getClassMethod(clz, @selector(cbHeight))) {
+            return [model.cb_cellClass(nil) cbHeight];
+        }else if (class_getInstanceMethod(clz, @selector(intrinsicContentSize))){
+            CGFloat sw = [UIScreen mainScreen].bounds.size.width;
+            CGSize icSize = [[tableView cellForRowAtIndexPath:indexPath] intrinsicContentSize];
+            return icSize.width>0 ? (sw * icSize.height / icSize.width) : 0;
+        }
     }
     return 0;
 }
