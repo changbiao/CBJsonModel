@@ -46,6 +46,21 @@
         model.cb_cellClass([CBTableViewCell class]);
         return model;
     });
+    {
+        CBJsonModel *jm = [CBJsonModel modelFromDict:@{}];
+        jm.cb_cellClass([CBTableViewCell class]);
+        [self.dataSource.cb_dataArray addObject:jm];
+    }
+    {
+        CBJsonModel *jm = [CBJsonModel modelFromDict:@{}];
+        jm.cb_cellClass([CBTableViewCell class]);
+        [self.dataSource.cb_dataArray insertObject:jm atIndex:1];
+    }
+    {
+        CBJsonModel *jm = [CBJsonModel modelFromDict:@{}];
+        jm.cb_cellClass([CBTableViewCell class]);
+        [self.dataSource.cb_dataArray replaceObjectAtIndex:1 withObject:jm];
+    }
 }
 
 
