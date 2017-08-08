@@ -765,6 +765,33 @@ UIColor *CBTableViewBgColor = nil;
     return model.cb_delConfirmListener(cell);
 }
 
+- (NSMethodSignature *)methodSignatureForSelector:(SEL)aSelector{
+    NSMethodSignature *signature = [super methodSignatureForSelector:aSelector];
+    if (!signature) {
+        (signature = [self.delegate methodSignatureForSelector:aSelector]);
+    }
+    return signature;
+}
+
+- (void)forwardInvocation:(NSInvocation *)anInvocation{
+    if ([super respondsToSelector:anInvocation.selector]) {
+        [anInvocation invokeWithTarget:self];
+    }
+    if ([self.delegate respondsToSelector:anInvocation.selector]) {
+        [anInvocation invokeWithTarget:self.delegate];
+    }
+}
+
+- (BOOL)respondsToSelector:(SEL)aSelector{
+    if ([super respondsToSelector:aSelector]) {
+        return YES;
+    }
+    if ([self.delegate respondsToSelector:aSelector]) {
+        return YES;
+    }
+    return NO;
+}
+
 @end
 
 
