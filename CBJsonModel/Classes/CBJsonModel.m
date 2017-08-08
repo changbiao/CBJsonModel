@@ -538,9 +538,7 @@ UIColor *CBTableViewBgColor = nil;
     if (obj && [obj isKindOfClass:[CBJsonModel class]]) {
         [self.cb_cellClassSet addObject:NSStringFromClass(((CBJsonModel *)obj).cb_cellClass(nil))];
         if (self.cb_onMemberChanged) {
-            dispatch_async(dispatch_get_main_queue(), ^{
-                self.cb_onMemberChanged(self);
-            });
+            self.cb_onMemberChanged(self);
         }
     }else {
         CBLog(@"[+]: 0xcb Error: %s object:%@", __func__, obj);

@@ -26,22 +26,22 @@
     self.dataSource = [CBDelegateDataSource new];
     self.dataSource.delegate = self;
     //test before
-    self.dataSource.cb_addModel(^CBDriverModel(CBJsonModel *model) {
-        model.cb_cellClass([CBTableViewCell class]);
-        model.cb_onUpdate = ^(CBTableViewCell *cell, CBDriverModel model) {
-            cell.centerLabel.text = ({
-                NSMutableString *ms = [NSMutableString string];
-                for (int i=0; i<8; i++) {
-                    [ms appendString:@"0123456789\n"];
-                }
-                ms;
-            });
-        };
-        model.cb_onSelected = ^(CBTableViewCell *cell, CBDriverModel model) {
-            NSLog(@"cell selected! %@", cell);
-        };
-        return model;
-    });
+//    self.dataSource.cb_addModel(^CBDriverModel(CBJsonModel *model) {
+//        model.cb_cellClass([CBTableViewCell class]);
+//        model.cb_onUpdate = ^(CBTableViewCell *cell, CBDriverModel model) {
+//            cell.centerLabel.text = ({
+//                NSMutableString *ms = [NSMutableString string];
+//                for (int i=0; i<8; i++) {
+//                    [ms appendString:@"0123456789\n"];
+//                }
+//                ms;
+//            });
+//        };
+//        model.cb_onSelected = ^(CBTableViewCell *cell, CBDriverModel model) {
+//            NSLog(@"cell selected! %@", cell);
+//        };
+//        return model;
+//    });
     
     [self.dataSource cb_setupWithTable:self.tableView];
     
