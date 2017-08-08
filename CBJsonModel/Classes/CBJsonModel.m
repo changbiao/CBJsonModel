@@ -555,7 +555,7 @@ UIColor *CBTableViewBgColor = nil;
         }
     }];
     if (self.cb_onMemberChanged) {
-        self.cb_onMemberChanged(self);
+        self.cb_onMemberChanged(self); 
     }
 }
 
