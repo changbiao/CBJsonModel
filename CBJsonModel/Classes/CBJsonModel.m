@@ -221,15 +221,20 @@ UIColor *CBTableViewBgColor = nil;
     if ([trimStr hasPrefix:@"http"]) {
         return [NSURL URLWithString:trimStr];
     }else if ([trimStr hasPrefix:@"/"] && trimStr.length){
-        if ([CBImageCDNURL isEqualToString:@"0xcb"]) {
-            CBLog(@"图片地址需要先指定CDN拼接地址");
-        }
+        [self cb_checkImageCDNUrl];
         return [NSURL URLWithString:[NSString stringWithFormat:@"%@%@", CBImageCDNURL, trimStr]];
     }else {
-        if ([CBImageCDNURL isEqualToString:@"0xcb"]) {
-            CBLog(@"图片地址需要先指定CDN拼接地址");
-        }
+        [self cb_checkImageCDNUrl];
         return [NSURL URLWithString:[NSString stringWithFormat:@"%@/%@", CBImageCDNURL, trimStr]];
+    }
+}
+
+- (void)cb_checkImageCDNUrl
+{
+    if ([CBImageCDNURL isEqualToString:@"0xcb"]) {
+        CBLog(@"图片地址需要先指定CDN拼接地址");
+    }else if ([CBImageCDNURL hasSuffix:@"/"] && (![CBImageCDNURL hasSuffix:@"//"])) {
+        CBImageCDNURL = [CBImageCDNURL substringToIndex:CBImageCDNURL.length-1];
     }
 }
 
@@ -630,6 +635,11 @@ UIColor *CBTableViewBgColor = nil;
         };
     }
     return self;
+}
+
+- (void)dealloc
+{
+    CBLog(@"<%@, %p> ====> %s", NSStringFromClass(self.class), self, __func__);
 }
 
 - (void)setCb_tableView:(UITableView *)cb_tableView

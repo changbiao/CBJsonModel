@@ -8,9 +8,13 @@
 
 #import <UIKit/UIKit.h>
 #import "AppDelegate.h"
+#import "CBJsonModel.h"
 
 int main(int argc, char * argv[]) {
     @autoreleasepool {
+        CBImageCDNURL = @"http://timgsa.baidu.com/";
+        CBJsonModel *jm = [CBJsonModel modelFromJson:@"{\"msg\":\"/timg?image\"}"];
+        NSLog(@"image url === %@", jm.msg.cbURL);
         return UIApplicationMain(argc, argv, nil, NSStringFromClass([AppDelegate class]));
     }
 }
