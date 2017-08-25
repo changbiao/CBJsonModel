@@ -97,6 +97,10 @@ typedef NSMutableArray *(^CBAddItemBlock) (CBAddItemWrapper wrapper);
 - (BOOL)cb_isSelfDriveCell:(UITableViewCell *)cell;
 @end
 
+@interface CBJsonModel (__0xcb_converter__)
++ (NSString *)convertToModel:(id)jsonObject name:(NSString *)name;
+@end
+
 
 @interface NSString (__0xcb__)
 @property (nonatomic, copy, readonly) NSURL *cbURL;

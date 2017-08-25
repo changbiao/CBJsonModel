@@ -59,6 +59,12 @@ UIColor *CBTableViewBgColor = nil;
     CBLog(@"注意设置未定义的kv =====  {%@:%@}", key, value);
 }
 
+- (id)valueForUndefinedKey:(NSString *)key
+{
+    CBLog(@"注意获取未定义的kv =====  {%@}", key);
+    return nil;
+}
+
 + (BOOL)propertyIsIgnored:(NSString *)propertyName
 {
     if ([@[@"cb_cellClass",
@@ -214,19 +220,67 @@ UIColor *CBTableViewBgColor = nil;
 @end
 
 
+@implementation CBJsonModel (__0xcb_converter__)
++ (NSString *)__cb_propertyWithKey:(NSString *)key value:(id)value
+{
+    NSMutableString *ms = [NSMutableString stringWithCapacity:1024];
+    if (value) {
+        if ([value isKindOfClass:[NSNull class]] ||
+            [value isKindOfClass:[NSString class]]) {
+            [ms appendFormat:@"@property (nonatomic, copy) NSString <Optional>*%@; //%@", key, value];
+        }else if ([value isKindOfClass:[NSNumber class]]) {
+            [ms appendFormat:@"@property (nonatomic, copy) NSNumber <Optional>*%@; //%@", key, value];
+        }else if ([value isKindOfClass:[NSArray class]]) {
+            [ms appendFormat:@"@property (nonatomic, retain) NSMutableArray <%@, Optional>*%@; //[]", @"key", key];
+        }else if ([value isKindOfClass:[NSDictionary class]]) {
+            [ms appendFormat:@"@property (nonatomic, retain) NSMutableArray <%@, Optional>*%@; //{}", @"key", key];
+        }
+    }
+    return ms;
+}
++ (NSString *)convertToModel:(id)jsonObject name:(NSString *)name
+{
+    if (!jsonObject) {
+        CBLog(@"%s don't need convert, jsonObject is nil", __func__);
+        return @"";
+    }
+    
+    NSMutableString *ms = [NSMutableString stringWithCapacity:1024];
+    if ([jsonObject isKindOfClass:[NSDictionary class]]) {
+        [ms appendFormat:@"@interface %@Model : CBJsonModel\n", name];
+        NSDictionary *dict = jsonObject;
+        NSArray *keys = [dict.allKeys sortedArrayUsingComparator:^NSComparisonResult(NSString *k1, NSString *k2) {
+            if ([dict[k1] isKindOfClass:[NSString class]] &&
+                [dict[k2] isKindOfClass:[NSString class]]) {
+                return [k1 compare:k2];
+            }
+            return [k1 compare:k2];
+        }];
+        for (NSString *k in keys) {
+            [ms appendFormat:@"%@\n", [CBJsonModel __cb_propertyWithKey:k value:dict[k]]];
+        }
+        [ms appendString:@"@end\n"];
+    }
+    return ms;
+}
+@end
+
+
 @implementation NSString (__0xcb__)
 - (NSURL *)cbURL
 {
+    NSURL *url = nil;
     NSString *trimStr = self.cbTrim;
     if ([trimStr hasPrefix:@"http"]) {
-        return [NSURL URLWithString:trimStr];
+        url = [NSURL URLWithString:trimStr];
     }else if ([trimStr hasPrefix:@"/"] && trimStr.length){
         [self cb_checkImageCDNUrl];
-        return [NSURL URLWithString:[NSString stringWithFormat:@"%@%@", CBImageCDNURL, trimStr]];
+        url = [NSURL URLWithString:[NSString stringWithFormat:@"%@%@", CBImageCDNURL, trimStr]];
     }else {
         [self cb_checkImageCDNUrl];
-        return [NSURL URLWithString:[NSString stringWithFormat:@"%@/%@", CBImageCDNURL, trimStr]];
+        url = [NSURL URLWithString:[NSString stringWithFormat:@"%@/%@", CBImageCDNURL, trimStr]];
     }
+    return url;
 }
 
 - (void)cb_checkImageCDNUrl

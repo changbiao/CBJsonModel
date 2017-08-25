@@ -79,6 +79,18 @@
         };
         [self.dataSource.cb_dataArray replaceObjectAtIndex:1 withObject:jm];
     }
+    
+    
+    
+    //测试输出字典映射模型类到控制台
+    NSError *jsonErr = nil;
+    NSString *testJsonPath = [[NSBundle mainBundle] pathForResource:@"test" ofType:@"json"];
+    NSData *testJsonData = [NSData dataWithContentsOfFile:testJsonPath];
+    id jsonObj = [NSJSONSerialization JSONObjectWithData:testJsonData options:    NSJSONReadingMutableContainers|NSJSONReadingMutableLeaves|NSJSONReadingAllowFragments error:&jsonErr];
+    if (jsonErr) {
+        NSLog(@"json parser err ====== %@", jsonErr);
+    }
+    NSLog(@"model class ====== \n%@", [CBJsonModel convertToModel:jsonObj name:@"AFCBGoods"]);
 }
 
 - (void)tableView:(UITableView *)tableView willDisplayFooterView:(UIView *)view forSection:(NSInteger)section

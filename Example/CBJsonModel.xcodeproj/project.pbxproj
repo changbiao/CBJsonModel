@@ -15,6 +15,7 @@
 		6003F5BA195388D20070C39A /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 6003F5B8195388D20070C39A /* InfoPlist.strings */; };
 		6003F5BC195388D20070C39A /* Tests.m in Sources */ = {isa = PBXBuildFile; fileRef = 6003F5BB195388D20070C39A /* Tests.m */; };
 		61AB4A658E449C480BD24E0B /* Pods_SampleApp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B14CF2E1915B2633167A55CC /* Pods_SampleApp.framework */; };
+		7045F97F1F4E781D00E80DF5 /* test.json in Resources */ = {isa = PBXBuildFile; fileRef = 7045F97E1F4E781D00E80DF5 /* test.json */; };
 		70633BD71F35AA310000E9C5 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 70633BD61F35AA310000E9C5 /* main.m */; };
 		70633BDA1F35AA310000E9C5 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 70633BD91F35AA310000E9C5 /* AppDelegate.m */; };
 		70633BDD1F35AA310000E9C5 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 70633BDC1F35AA310000E9C5 /* ViewController.m */; };
@@ -39,6 +40,7 @@
 		6003F5B9195388D20070C39A /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		6003F5BB195388D20070C39A /* Tests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Tests.m; sourceTree = "<group>"; };
 		606FC2411953D9B200FFA9A0 /* Tests-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Tests-Prefix.pch"; sourceTree = "<group>"; };
+		7045F97E1F4E781D00E80DF5 /* test.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = test.json; sourceTree = "<group>"; };
 		70633BD31F35AA310000E9C5 /* SampleApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SampleApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		70633BD61F35AA310000E9C5 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		70633BD81F35AA310000E9C5 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -172,6 +174,7 @@
 				70633BEA1F35AB4E0000E9C5 /* CBTableViewCell.h */,
 				70633BEB1F35AB4E0000E9C5 /* CBTableViewCell.m */,
 				70633BEC1F35AB4E0000E9C5 /* CBTableViewCell.xib */,
+				7045F97E1F4E781D00E80DF5 /* test.json */,
 			);
 			path = SampleApp;
 			sourceTree = "<group>";
@@ -293,6 +296,7 @@
 				70633BE51F35AA310000E9C5 /* LaunchScreen.storyboard in Resources */,
 				70633BE21F35AA310000E9C5 /* Assets.xcassets in Resources */,
 				70633BE01F35AA310000E9C5 /* Main.storyboard in Resources */,
+				7045F97F1F4E781D00E80DF5 /* test.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
