@@ -91,6 +91,15 @@
         NSLog(@"json parser err ====== %@", jsonErr);
     }
     NSLog(@"model class ====== \n%@", [CBJsonModel convertToModel:jsonObj name:@"AFCBGoods"]);
+    
+    
+    //]^
+    uint8_t commandBytes[] = {
+        ']', '^'
+    };
+    NSMutableData *mutData = [NSMutableData data];
+    [mutData appendBytes:commandBytes length:sizeof(commandBytes)];
+    NSLog(@"数据对比 === \n>>>%@<<< \n>>>%@<<<", mutData, [@"]^" dataUsingEncoding:NSUTF8StringEncoding]);
 }
 
 - (void)tableView:(UITableView *)tableView willDisplayFooterView:(UIView *)view forSection:(NSInteger)section

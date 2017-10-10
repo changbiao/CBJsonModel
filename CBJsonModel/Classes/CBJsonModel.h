@@ -165,6 +165,7 @@ typedef NSMutableArray *(^CBAddItemBlock) (CBAddItemWrapper wrapper);
 - (void)cb_setupWithTable:(UITableView *)tableView;
 //for subclass override.
 - (void)cb_registerCellNibWithClasses;
+- (void)cb_setupWithCell:(UITableViewCell *)cell;
 @end
 
 

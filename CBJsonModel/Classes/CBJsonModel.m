@@ -759,6 +759,11 @@ UIColor *CBTableViewBgColor = nil;
     tableView.dataSource = self;
 }
 
+- (void)cb_setupWithCell:(UITableViewCell *)cell
+{
+    cell.selectionStyle = UITableViewCellSelectionStyleNone;
+}
+
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
     return self.cb_dataArray.count;
@@ -768,6 +773,8 @@ UIColor *CBTableViewBgColor = nil;
 {
     CBJsonModel *model = self.cb_dataArray[indexPath.row];
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:NSStringFromClass(model.cb_cellClass(nil)) forIndexPath:indexPath];
+    //setup cell style
+    [self cb_setupWithCell:cell];
     model.cb_updateListener(cell);
     return cell;
 }
