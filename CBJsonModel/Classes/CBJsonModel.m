@@ -68,7 +68,13 @@ UIColor *CBTableViewBgColor = nil;
 + (BOOL)propertyIsIgnored:(NSString *)propertyName
 {
     if ([@[@"cb_cellClass",
-           @"cb_onUpdate", @"cb_onSelected", @"cb_canEdit", @"cb_editStyle", @"cb_onEditor", @"cb_onDelConfirm",
+           @"cb_onUpdate",
+           @"cb_onSelected",
+           @"cb_calcHeight",
+           @"cb_canEdit",
+           @"cb_editStyle",
+           @"cb_onEditor",
+           @"cb_onDelConfirm",
            @"cb_updateListener", @"cb_eventListener", @"cb_canEditListener", @"cb_editStyleListener", @"cb_editorListener", @"cb_delConfirmListener"
            ]
          containsObject:propertyName]) {
@@ -125,13 +131,14 @@ UIColor *CBTableViewBgColor = nil;
     return YES;
 }
 
-- (CBClassProperty)cb_cellClass
+- (CBClassPropertyGetterSetter)cb_cellClass
 {
     CBJsomModelWeakSelf;
     return ^Class(Class cls) {
         if (cls != nil) {
             ws.cb_onUpdate = nil;
             ws.cb_onSelected = nil;
+            ws.cb_calcHeight = nil;
             ws.cb_canEdit = nil;
             ws.cb_editStyle = nil;
             ws.cb_onEditor = nil;
@@ -496,8 +503,27 @@ UIColor *CBTableViewBgColor = nil;
 
 - (void)cb_registerNibClass:(Class)nibClass
 {
-    NSString *nibName = NSStringFromClass(nibClass);
-    [self registerNib:[UINib nibWithNibName:nibName bundle:[NSBundle mainBundle]] forCellReuseIdentifier:nibName];
+    NSString *cellClassString = NSStringFromClass(nibClass);
+    if ([cellClassString hasPrefix:@"UI"]) {
+        [self registerClass:nibClass forCellReuseIdentifier:cellClassString];
+    }else {
+        UINib *nib = [UINib nibWithNibName:cellClassString bundle:[NSBundle bundleForClass:nibClass]];
+        if (nib) {
+            [self registerNib:[UINib nibWithNibName:cellClassString bundle:[NSBundle bundleForClass:nibClass]] forCellReuseIdentifier:cellClassString];
+        }else {
+            [self registerClass:nibClass forCellReuseIdentifier:cellClassString];
+        }
+    }
+}
+
+- (void)cc_registerCellClass:(Class)cellClass {
+    [self cb_registerNibClass:cellClass];
+}
+
+- (__kindof UITableViewCell *)cc_dequeueReusableCellWithCellClass:(Class)cellClass forIndexPath:(NSIndexPath *)indexPath {
+    [self cc_registerCellClass:cellClass];
+    NSString *cellClassString = NSStringFromClass(cellClass);
+    return [self dequeueReusableCellWithIdentifier:cellClassString forIndexPath:indexPath];
 }
 
 @end
@@ -783,9 +809,13 @@ UIColor *CBTableViewBgColor = nil;
 {
     CBJsonModel *model = self.cb_dataArray[indexPath.row];
     Class clz = model.cb_cellClass(nil);
-    if (object_isClass(clz)) {
+    if (model && object_isClass(clz)) {
         if (class_getClassMethod(clz, @selector(cbHeight))) {
-            return [model.cb_cellClass(nil) cbHeight];
+            return [clz cbHeight];
+        }else if (class_getClassMethod(clz, @selector(cbHeightWithModel:))) {
+            return [clz cbHeightWithModel:model];
+        }else if (model.cb_calcHeight) {
+            return model.cb_calcHeight(tableView.frame.size);
         }else if (class_getInstanceMethod(clz, @selector(intrinsicContentSize))){
             CGFloat sw = [UIScreen mainScreen].bounds.size.width;
             UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];

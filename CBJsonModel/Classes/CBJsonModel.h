@@ -28,16 +28,21 @@ extern UIColor *CBTableViewBgColor;
 @class CBJsonModel;
 @protocol CBCellProtocol;
 CBJsonProtocol(CBJsonModel);
+CBJsonProtocol(NSNumber);
+CBJsonProtocol(NSString);
 CBJsonProtocol(NSMutableArray);
 CBJsonProtocol(NSMutableDictionary);
 CBJsonProtocol(NSMutableString);
 
 //type 
-typedef Class (^CBClassProperty)(Class cls);
-typedef id /*<CBCellProtocol>*/ CBDrivableCell;
-typedef id /*<CBJsonModel>*/ CBDriverModel;
-//model drive cell, TODO: strict mode for compiler
+typedef Class (^CBClassPropertyGetterSetter)(Class cls);
+//need implementation protocol <CBCellProtocol>
+typedef id CBDrivableCell;
+//need implementation protocol <CBJsonModel>
+typedef id CBDriverModel;
+//model drive cell
 typedef void (^CBItemAdapter)(CBDrivableCell cell, CBDriverModel model);
+typedef CGFloat (^CBItemHeightCalculator)(CGSize tbSize);
 typedef BOOL (^CBItemCanEdit)(CBDrivableCell cell, CBDriverModel model);
 typedef UITableViewCellEditingStyle (^CBItemEditStyle)(CBDrivableCell cell, CBDriverModel model);
 typedef void (^CBItemEditor)(CBDrivableCell cell, CBDriverModel model, UITableViewCellEditingStyle editStyle);
@@ -61,6 +66,7 @@ typedef NSMutableArray *(^CBAddItemBlock) (CBAddItemWrapper wrapper);
 
 @protocol CBCellProtocol <NSObject>
 @property (class, nonatomic, assign, readonly) CGFloat cbHeight;
++ (CGFloat)cbHeightWithModel:(CBJsonModel *)model;
 - (CGSize)intrinsicContentSize;
 @end
 
@@ -70,11 +76,13 @@ typedef NSMutableArray *(^CBAddItemBlock) (CBAddItemWrapper wrapper);
 @property (nonatomic, retain) NSObject <CBJsonModelListProtocol, NSMutableArray, CBJsonModel, NSMutableDictionary, NSMutableString, Optional>*data;
 
 //additions
-//Call property CBClassProperty cb_cellClass to set cell class, because JSONModel can't define a `Class` type property.
+//Call property CBClassProperty cb_cellClass to set cell class,
+//because JSONModel can't define a `Class` type property.
 //@property (nonatomic, assign) Class cb_cellClass;
 @property (nonatomic, retain, readonly) NSMutableDictionary *cb_params;
 @property (nonatomic, copy) CBItemAdapter cb_onUpdate;
 @property (nonatomic, copy) CBItemAdapter cb_onSelected;
+@property (nonatomic, copy) CBItemHeightCalculator cb_calcHeight;
 @property (nonatomic, copy) CBItemCanEdit cb_canEdit;
 @property (nonatomic, copy) CBItemEditStyle cb_editStyle;
 @property (nonatomic, copy) CBItemEditor cb_onEditor;
@@ -86,7 +94,7 @@ typedef NSMutableArray *(^CBAddItemBlock) (CBAddItemWrapper wrapper);
 
 
 @interface CBJsonModel (__0xcb_wrapper__)
-@property (nonatomic, copy, readonly) CBClassProperty cb_cellClass;
+@property (nonatomic, copy, readonly) CBClassPropertyGetterSetter cb_cellClass;
 @property (nonatomic, copy, readonly) CBItemListener cb_updateListener;
 @property (nonatomic, copy, readonly) CBItemListener cb_eventListener;
 @property (nonatomic, copy, readonly) CBItemCanEditListener cb_canEditListener;
@@ -97,6 +105,7 @@ typedef NSMutableArray *(^CBAddItemBlock) (CBAddItemWrapper wrapper);
 - (BOOL)cb_isSelfDriveCell:(UITableViewCell *)cell;
 @end
 
+//不维护这一部分了，已经用Paw加自己写的插件，根据接口返回的json生成对应的模型类到项目工程目录下
 @interface CBJsonModel (__0xcb_converter__)
 + (NSString *)convertToModel:(id)jsonObject name:(NSString *)name;
 @end
@@ -144,6 +153,8 @@ typedef NSMutableArray *(^CBAddItemBlock) (CBAddItemWrapper wrapper);
 
 @interface UITableView (__0xcb__)
 - (void)cb_registerNibClass:(Class)nibClass;
+- (void)cc_registerCellClass:(Class)cellClass;
+- (__kindof UITableViewCell *)cc_dequeueReusableCellWithCellClass:(Class)cellClass forIndexPath:(NSIndexPath *)indexPath;
 @end
 
 
