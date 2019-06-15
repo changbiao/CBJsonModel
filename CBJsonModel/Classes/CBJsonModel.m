@@ -815,7 +815,7 @@ UIColor *CBTableViewBgColor = nil;
         }else if (class_getClassMethod(clz, @selector(cbHeightWithModel:))) {
             return [clz cbHeightWithModel:model];
         }else if (model.cb_calcHeight) {
-            return model.cb_calcHeight(tableView.frame.size);
+            return model.cb_calcHeight(model, tableView);
         }else if (class_getInstanceMethod(clz, @selector(intrinsicContentSize))){
             CGFloat sw = [UIScreen mainScreen].bounds.size.width;
             UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];

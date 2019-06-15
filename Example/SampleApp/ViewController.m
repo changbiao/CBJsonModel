@@ -63,7 +63,7 @@
         jm.cb_onSelected = ^(CBTableViewCell *cell, CBDriverModel model) {
             NSLog(@"cell selected! %@", cell);
         };
-        jm.cb_calcHeight = ^CGFloat(CGSize tbSize) {
+        jm.cb_calcHeight = ^CGFloat(CBJsonModel *model, UITableView *table) {
             return 180;
         };
         [self.dataSource.cb_dataArray addObject:jm];
