@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'CBJsonModel'
-  s.version          = '1.0.8'
+  s.version          = '1.1.0'
   s.summary          = 'Simple, Faster build some form submit App with catgory, Wrapper UITableView delegate and dataSource with block.'
 
 # This description is used to generate tags and improve search results.
