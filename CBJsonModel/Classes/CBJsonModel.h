@@ -42,7 +42,7 @@ typedef id CBDrivableCell;
 typedef id CBDriverModel;
 //model drive cell
 typedef void (^CBItemAdapter)(CBDrivableCell cell, CBDriverModel model);
-typedef CGFloat (^CBItemHeightCalculator)(CBJsonModel *model, UITableView *table);
+typedef CGFloat (^CBItemHeightCalculator)(CBDriverModel model, UITableView *table);
 typedef BOOL (^CBItemCanEdit)(CBDrivableCell cell, CBDriverModel model);
 typedef UITableViewCellEditingStyle (^CBItemEditStyle)(CBDrivableCell cell, CBDriverModel model);
 typedef void (^CBItemEditor)(CBDrivableCell cell, CBDriverModel model, UITableViewCellEditingStyle editStyle);

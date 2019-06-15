@@ -60,10 +60,10 @@
     {
         CBJsonModel *jm = [CBJsonModel modelFromDict:@{}];
         jm.cb_cellClass([CBTableViewCell class]);
-        jm.cb_onSelected = ^(CBTableViewCell *cell, CBDriverModel model) {
+        jm.cb_onSelected = ^(CBTableViewCell *cell, NSObject *model) {
             NSLog(@"cell selected! %@", cell);
         };
-        jm.cb_calcHeight = ^CGFloat(CBJsonModel *model, UITableView *table) {
+        jm.cb_calcHeight = ^CGFloat(UITableView *model, UITableView *table) {
             return 180;
         };
         [self.dataSource.cb_dataArray addObject:jm];
